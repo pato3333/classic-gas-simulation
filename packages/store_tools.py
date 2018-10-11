@@ -70,8 +70,8 @@ class Array2D(object):
         assert len(idx_tuple) == 2
         row = idx_tuple[0]
         column = idx_tuple[1]
-        assert 0 < row < self.num_rows() and\
-            0 < column < self.num_columns(),\
+        assert 0 <= row < self.num_rows() and\
+            0 <= column < self.num_columns(),\
             "Array subscript out of range."
         column_array = self._theRows[row]
         return column_array[column]
@@ -80,8 +80,8 @@ class Array2D(object):
         assert len(idx_tuple) == 2
         row = idx_tuple[0]
         column = idx_tuple[1]
-        assert 0 < row < self.num_rows() and\
-            0 < column < self.num_columns(),\
+        assert 0 <= row < self.num_rows() and\
+            0 <= column < self.num_columns(),\
             "Array subscript out of range."
         column_array = self._theRows[row]
         column_array[column] = value
@@ -98,7 +98,7 @@ class Matrix(object):
     def num_columns(self):
         return self._theGrid.num_columns()
 
-    def __getitem__(self, item, idx_tuple):
+    def __getitem__(self, idx_tuple):
         return self._theGrid[idx_tuple[0], idx_tuple[1]]
 
     def __setitem__(self, idx_tuple, value):
@@ -110,19 +110,68 @@ class Matrix(object):
                 self[i, j] *= scale
 
     def __add__(self, other):
-        assert other.num_rows() == self.num_columns() and\
+        assert other.num_rows() == self.num_rows() and\
             other.num_columns() == self.num_columns(),\
             "The matrices are not compatible"
-        sum_matrix = Matrix(self.num_columns(), self.num_rows())
+        sum_matrix = Matrix(self.num_rows(), self.num_columns())
         for i in range(self.num_rows()):
             for j in range(self.num_columns()):
-                sum_matrix[i, j] = self[i, j]+other[i, j]
+                sum_matrix[i, j] = self[i, j] + other[i, j]
         return sum_matrix
 
-    def __res__(self, other):
+    def __sub__(self, other):
         aux_matrix = other
         aux_matrix.scale_by(-1)
         return self + aux_matrix
+
+    def print_matrix(self):
+        for row in range(self.num_rows()):
+            for column in range(self.num_columns()):
+                print(self[row, column], end = "")
+            print("")
+
+
+class SyMatrix(object):
+    def __init__(self, n):
+        self._array = Array(n*(n+1)//2)
+        self._array.clear(None)
+        self._size = n
+
+    def get_size(self):
+        return self._size
+
+    def _transform(self, i, j):
+        return j + i*(self._size - 2) + 1
+
+    def __getitem__(self, idx_tuple):
+        i = idx_tuple[0]
+        j = idx_tuple[1]
+        if j < i:
+            temp = i
+            i = j
+            j = temp
+        return self._array[self._transform(i, j)]
+
+    def __setitem__(self, idx_tuple, value):
+        i = idx_tuple[0]
+        j = idx_tuple[1]
+        if j < i:
+            temp = i
+            i = j
+            j = temp
+        self._array[self._transform(i, j)] = value
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
