@@ -28,6 +28,18 @@ class Array(object):
     def __iter__(self):
         return _ArrayIterator(self._elements)
 
+    def __add__(self, other):
+        assert self._size == len(other),\
+            "arrays can't be add"
+        add_a = Array(self._size)
+        for x in range(self._size):
+            add_a[x] = self[x]+other[x]
+        return add_a
+
+    def scale_by(self, value):
+        for x in range(self._size):
+            self[x] *= value
+
 
 class _ArrayIterator(object):
     def __init__(self, elements):
@@ -133,7 +145,7 @@ class Matrix(object):
 
 class SyMatrix(object):
     def __init__(self, n):
-        self._array = Array(n*(n+1)//2)
+        self._array = Array(n*(n+1))
         self._array.clear(None)
         self._size = n
 
@@ -160,28 +172,4 @@ class SyMatrix(object):
             i = j
             j = temp
         self._array[self._transform(i, j)] = value
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
